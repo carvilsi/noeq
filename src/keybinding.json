@@ -1,0 +1,88 @@
+{
+  "keyPress": {
+    "\u001b[A": {
+      "f":"reverse",
+      "shift": false,
+      "description": "Performs a reverse operation over the stack elements",
+      "keyName": "up"
+    },
+    "\u001b[D": {
+      "f": "drop",
+      "shift": false,
+      "description": "Deletes the first element on the stack",
+      "keyName": "left"
+    },
+    "\u001b[C": {
+      "f": "swap",
+      "shift": false,
+      "description": "Swaps the two first elements on the stack",
+      "keyName": "right"
+    },
+    "\u001b[B": {
+      "f": "first",
+      "shift": false,
+      "description": "Swaps position of the first and last elements on the stack",
+      "keyName": "down"
+    },
+    "+": {
+      "operation": "add",
+      "shift": false,
+      "numOp": 2
+    },
+    "/": {
+      "operation": "divide",
+      "shift": false,
+      "numOp": 2
+    },
+    "-": {
+      "operation": "subtract",
+      "shift": false,
+      "numOp": 2
+    },
+    "*": {
+      "operation": "multiply",
+      "shift": false,
+      "numOp": 2
+    },
+    "p": {
+      "operation": "pow",
+      "shift": false,
+      "numOp": 2
+    },
+    "c": {
+      "operation": "cos",
+      "shift": false,
+      "numOp": 1
+    },
+    "C": {
+      "operation": "sec",
+      "shift": true,
+      "numOp": 1
+    },
+    "s": {
+      "operation": "sin",
+      "shift": false,
+      "numOp": 1
+    },
+    "S": {
+      "operation": "csc",
+      "shift": true,
+      "numOp": 1
+    },
+    "t": {
+      "operation": "tan",
+      "shift": false,
+      "numOp": 1
+    },
+    "T": {
+      "operation": "cot",
+      "shift": true,
+      "numOp": 1
+    },
+    "r": {
+      "operation": "sqrt",
+      "shift": false,
+      "numOp": 1
+    }
+  }
+}
