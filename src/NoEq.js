@@ -1,13 +1,18 @@
 "use strict";
 
 const readline = require('readline');
+const homedir = require('os').homedir();
+const fs = require('fs');
+const path = require('path');
 const _ = require('lodash');
 const math = require('mathjs');
 const Logger = require('js-logger');
+const loki = require('lokijs');
 const pckg = require('./../package.json');
 const keybinding = require('./keybinding.json');
 const Stack = require('./Stack');
 const StackOps = require('./StackOps');
+
 
 
 const rgxpNum = /^[']?[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/;
@@ -38,12 +43,27 @@ class NoEq {
     this.stack = [];
     this.tmp = [];
     this.switchKeypress = true;
+    this.appDir = '.noeqRPNCjsCALC';
+  }
+
+  createDefaultFolder() {
+    try {
+      if (!fs.existsSync(`${homedir}${path.sep}${this.appDir}`)){
+        fs.mkdirSync(`${homedir}${path.sep}${this.appDir}`);
+      }
+    } catch (e) {
+      Logger.debug(`e: ${e}`);
+    }
   }
 
   on() {
 
     Logger.useDefaults();
     Logger.setLevel(Logger[this.logLevel]);
+
+    this.createDefaultFolder();
+
+    var db = new loki(`${homedir}${path.sep}${this.appDir}${path.sep}loki.js`);
 
     math.config({
       number: 'BigNumber',
@@ -58,7 +78,7 @@ class NoEq {
       historySize: 0
     });
 
-    let stackCtrl = new Stack(rl, math, Logger);
+    let stackCtrl = new Stack(rl, math, Logger, db);
     let stackOps = new StackOps(rl, math, Logger);
 
     stackCtrl.print(this.stack);
@@ -171,6 +191,14 @@ class NoEq {
         }
       }
     });
+
+    rl.on('SIGINT', () => {
+      rl.question('May I store the current stack? (will be available the next time you\'ll open NoEq)', (answer) => {
+        if (answer.match(/^y(es)?$/i)) process.exit();
+      });
+    });
+
+
   }
 }
 

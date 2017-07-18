@@ -34,6 +34,10 @@ lodash@^4.17.4:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
+lokijs@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/lokijs/-/lokijs-1.5.0.tgz#99e403d6a89e47e11ed0c5d499fb55a0603d5efc"
+
 mathjs@^3.14.2:
   version "3.14.2"
   resolved "https://registry.yarnpkg.com/mathjs/-/mathjs-3.14.2.tgz#bb79b7dc878b7f586ce408ab067a9a42db2e7a2d"
