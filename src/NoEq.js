@@ -75,7 +75,6 @@ class NoEq {
           this.tmp.push(key.sequence);
         } else {
           Logger.debug('not add');
-
         }
         // parsing stuff like "," as "." the real decimal symbol ;) for MacOSX users
         if (key.sequence === ',') {
@@ -91,7 +90,7 @@ class NoEq {
         if (key.name === 'return') {
           Logger.debug('RETURN');
           // cleaning the tmp array with strangerThings
-          if (this.tmp.length === 1 && strangerThings[this.tmp[0]]) {
+          if (this.tmp.length > 0 && strangerThings[this.tmp[0]]) {
             this.tmp = []
           }
           if (this.tmp.length === 0 && this.stack.length > 0) {
@@ -109,10 +108,13 @@ class NoEq {
               this.stack.push(num);
               this.tmp = [];
             }
+          } else {
+            this.tmp = [];
           }
           stackCtrl.print(this.stack);
         } else {
           // is something to parse into a Float and one last symbol
+          Logger.debug(`this.tmp.length: ${this.tmp.length}`);
           var cmd = this.tmp[this.tmp.length-1];
           Logger.debug(`cmd: ${cmd}`);
 

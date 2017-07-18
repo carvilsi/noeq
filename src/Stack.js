@@ -13,7 +13,7 @@ class Stack {
   }
 
   print(stack) {
-    this.Logger.debug(`Stack=  [${stack}]`)
+    // this.Logger.debug(`Stack=  [${stack}]`)
     if (this.Logger.get().context.filterLevel.name === 'OFF') {
       console.log('\x1Bc');
     }

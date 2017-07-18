@@ -5,7 +5,7 @@
 ![Alt vmware](https://github.com/carvilsi/noeq/raw/master/img/noeq.png)
 
 
-On top of math.js a powerful and extensible RPN calculator UX oriented.
+On top of math.js a powerful and extensible and easily customize RPN calculator UX oriented.
 
 Due the current Keymap, any operation will be executed after pressing the key, with the arguments on the stack or inline with the last one. Thus you not need to press enter to execute operation.
 
@@ -19,7 +19,7 @@ Sadly if you want to put a negative number on the stack or operate you need to s
 
 The name "NoEq" is a small tribute to those great HP's RPN calculators and his [No Equals](https://en.wikipedia.org/wiki/Reverse_Polish_notation#Hewlett-Packard) stuff.
 
-**Status**: Only works on my computer. 
+**Status**: Only works on my computer.
 
 ## Run
 
