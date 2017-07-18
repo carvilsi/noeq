@@ -2,14 +2,19 @@
 
 const colors = require('colors');
 const _      = require('lodash');
+const loki   = require('lokijs');
 // This class is to deal with the stack
 
 class Stack {
 
-  constructor(readLine, math, Logger) {
+  constructor(readLine, math, Logger, stackLine) {
     this.readLine = readLine;
     this.math = math;
     this.Logger = Logger;
+    // console.log(db);
+
+    // this.stackLine = db.addCollection('stackLine');
+    this.stackLine = stackLine;
   }
 
   print(stack) {
@@ -21,6 +26,7 @@ class Stack {
       console.log(`${i}:`.gray + ` ${stack[stack.length-i]}`);
     }
     this.readLine.prompt();
+    this.stackLine.insert({state:stack});
   }
 
   arrayToFloat(array) {

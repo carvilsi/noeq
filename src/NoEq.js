@@ -33,6 +33,10 @@ const strangerThings = {
 }
 
 
+var db = null;
+var stackLine = null;
+
+
 class NoEq {
 
   constructor(options) {
@@ -56,6 +60,13 @@ class NoEq {
     }
   }
 
+  lokiLoadHandler() {
+    stackLine = db.getCollection('stackLine');
+    if (!stackLine) {
+      stackLine = db.addCollection('stackLine');
+    }
+  }
+
   on() {
 
     Logger.useDefaults();
@@ -63,7 +74,22 @@ class NoEq {
 
     this.createDefaultFolder();
 
-    var db = new loki(`${homedir}${path.sep}${this.appDir}${path.sep}loki.js`);
+    // Logger.debug(`${homedir}${path.sep}${this.appDir}${path.sep}loki.js`);
+
+    db = new loki(`${homedir}${path.sep}${this.appDir}${path.sep}loki.js`,
+      {
+        autoload:true
+
+      });
+    this.lokiLoadHandler();
+
+    Logger.debug(`stackLine.count(): ${stackLine.count()}`);
+    Logger.debug(`stackLine.get(0): ${stackLine.get(1,true)}`);
+
+
+    stackLine.insert({state:this.stack});
+    stackLine.insert({state:'this.stack'});
+    db.saveDatabase();
 
     math.config({
       number: 'BigNumber',
@@ -78,10 +104,11 @@ class NoEq {
       historySize: 0
     });
 
-    let stackCtrl = new Stack(rl, math, Logger, db);
+    let stackCtrl = new Stack(rl, math, Logger, stackLine);
     let stackOps = new StackOps(rl, math, Logger);
 
     stackCtrl.print(this.stack);
+    stackLine.insert({state:this.stack});
 
     process.stdin.on('keypress', (s,key) => {
       // Logger.debug(`key: ${JSON.stringify(key,null,2)}`);
@@ -132,6 +159,7 @@ class NoEq {
             this.tmp = [];
           }
           stackCtrl.print(this.stack);
+          stackLine.insert({state:this.stack});
         } else {
           // is something to parse into a Float and one last symbol
           Logger.debug(`this.tmp.length: ${this.tmp.length}`);
@@ -148,6 +176,7 @@ class NoEq {
               }
             }
             stackCtrl.print(this.stack);
+            stackLine.insert({state:this.stack});
             for (var i = 0; i < this.tmp.length; i++) {
               Logger.debug(`this.tmp: ${this.tmp}`);
               rl.write(null,{name: 'delete'});
@@ -159,6 +188,7 @@ class NoEq {
                       ) { // first stack stuff
                         this.stack = stackOps[keybinding.keyPress[key.sequence].f](this.stack);
                         stackCtrl.print(this.stack);
+                        stackLine.insert({state:this.stack});
                         this.tmp = [];
           } else if (keybinding.keyPress[key.sequence] != null &&
                      this.switchKeypress &&
@@ -166,6 +196,7 @@ class NoEq {
                    ) { // this is a math operation
                        this.stack = stackCtrl.operation(keybinding.keyPress[key.sequence].numOp,keybinding.keyPress[key.sequence].operation,this.stack);
                        stackCtrl.print(this.stack);
+                       stackLine.insert({state:this.stack});
                        this.tmp = [];
                        rl.write(null,{name: 'delete'});
           } else if (key.shift &&
@@ -176,6 +207,7 @@ class NoEq {
                    ) { // first stack stuff with shift key
                         this.stack = stackOps[keybinding.keyPress[key.sequence].f](this.stack);
                         stackCtrl.print(this.stack);
+                        stackLine.insert({state:this.stack});
                         this.tmp = [];
           } else if (key.shift &&
                      keybinding.keyPress[key.sequence] != null &&
@@ -185,6 +217,7 @@ class NoEq {
                    ) { // this is a math operation with shift key
                        this.stack = stackCtrl.operation(keybinding.keyPress[key.sequence].numOp,keybinding.keyPress[key.sequence].operation,this.stack);
                        stackCtrl.print(this.stack);
+                       stackLine.insert({state:this.stack});
                        this.tmp = [];
                        rl.write(null,{name: 'delete'});
           }
@@ -194,7 +227,16 @@ class NoEq {
 
     rl.on('SIGINT', () => {
       rl.question('May I store the current stack? (will be available the next time you\'ll open NoEq)', (answer) => {
-        if (answer.match(/^y(es)?$/i)) process.exit();
+        if (answer.match(/^y(es)?$/i)) {
+          try {
+            db.saveDatabase();
+          } catch (e) {
+            Logger.error(e);
+
+          }
+          process.exit();
+        }
+
       });
     });
 
