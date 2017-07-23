@@ -2,7 +2,8 @@
 
 const colors = require('colors');
 const _      = require('lodash');
-const loki   = require('lokijs');
+
+
 // This class is to deal with the stack
 
 class Stack {
@@ -18,7 +19,7 @@ class Stack {
   }
 
   print(stack) {
-    // this.Logger.debug(`Stack=  [${stack}]`)
+    this.Logger.debug(`Stack=  [${stack}]`)
     if (this.Logger.get().context.filterLevel.name === 'OFF') {
       console.log('\x1Bc');
     }

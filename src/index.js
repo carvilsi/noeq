@@ -7,11 +7,11 @@ const path = require('path');
 const _ = require('lodash');
 const math = require('mathjs');
 const Logger = require('js-logger');
-const loki = require('lokijs');
 const pckg = require('./../package.json');
 const keybinding = require('./keybinding.json');
 const Stack = require('./Stack');
 const StackOps = require('./StackOps');
+const loki   = require('lokijs');
 
 
 

@@ -3,7 +3,7 @@
 'use strict';
 
 const options = require('commander');
-const NoEq = require('./../src/NoEq');
+const NoEq = require('./../src/index');
 const pckg = require('./../package.json');
 
 options
