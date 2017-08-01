@@ -1,21 +1,24 @@
 "use strict";
 
-const colors = require('colors');
-const _      = require('lodash');
+const colors  = require('colors');
+const _       = require('lodash');
+const loki    = require('lokijs');
 
 
 // This class is to deal with the stack
 
 class Stack {
 
-  constructor(readLine, math, Logger, stackLine) {
+  constructor(readLine, math, Logger, lokiFile) {
     this.readLine = readLine;
     this.math = math;
     this.Logger = Logger;
-    // console.log(db);
-
-    // this.stackLine = db.addCollection('stackLine');
-    this.stackLine = stackLine;
+    // this.Logger.debug(stackLine);
+    this.stackLine = null;
+    this.db = null;
+    this.lokiFile = lokiFile;
+    this.initLoki();
+    this.lokiLoadHandler();
   }
 
   print(stack) {
@@ -27,7 +30,17 @@ class Stack {
       console.log(`${i}:`.gray + ` ${stack[stack.length-i]}`);
     }
     this.readLine.prompt();
-    this.stackLine.insert({state:stack});
+    try {
+      this.stackLine.insert({state:stack.toString()});
+      console.log(this.stackLine.get(1,true));
+      for (var i = 0; i <= this.stackLine.count(); i++) {
+        console.log(this.stackLine.get(i,true));
+
+      }
+      // this.Logger.debug(`stackLine.get(0): ${}`);
+    } catch (e) {
+      this.Logger.debug(e);
+    }
   }
 
   arrayToFloat(array) {
@@ -78,6 +91,28 @@ class Stack {
       return stack;
     }
     return stack;
+  }
+
+  initLoki() {
+    console.log('=^^=|_');
+    this.Logger.debug(`lokiFile: ${this.lokiFile}`);
+    console.log('=^^=|_');
+    this.db = new loki(this.lokiFile,
+      {
+        autoload:true,
+        autosave:true
+      });
+  }
+
+  lokiLoadHandler() {
+    this.stackLine = this.db.getCollection('stackLine');
+    if (!this.stackLine) {
+      this.stackLine = this.db.addCollection('stackLine');
+    }
+  }
+
+  save() {
+    this.db.saveDatabase();
   }
 
 }

@@ -3,13 +3,15 @@
 const _ = require('lodash');
 const Stack = require('./Stack');
 
-class StackOps extends Stack {
+// class StackOps extends Stack {
+class StackOps  {
 
   constructor(readLine, math, Logger) {
-    super(readLine,math,Logger);
+    // super(readLine,math,Logger);
     this.readLine = readLine;
     this.math = math;
     this.Logger = Logger;
+    // super();
   }
 
   drop(stack) {

@@ -11,7 +11,7 @@ const pckg = require('./../package.json');
 const keybinding = require('./keybinding.json');
 const Stack = require('./Stack');
 const StackOps = require('./StackOps');
-const loki   = require('lokijs');
+// const loki   = require('lokijs');
 
 
 
@@ -48,6 +48,7 @@ class NoEq {
     this.tmp = [];
     this.switchKeypress = true;
     this.appDir = '.noeqRPNCjsCALC';
+    // this.lokiFile = `${homedir}${path.sep}${this.appDir}`;
   }
 
   createDefaultFolder() {
@@ -60,13 +61,6 @@ class NoEq {
     }
   }
 
-  lokiLoadHandler() {
-    stackLine = db.getCollection('stackLine');
-    if (!stackLine) {
-      stackLine = db.addCollection('stackLine');
-    }
-  }
-
   on() {
 
     Logger.useDefaults();
@@ -76,20 +70,15 @@ class NoEq {
 
     // Logger.debug(`${homedir}${path.sep}${this.appDir}${path.sep}loki.js`);
 
-    db = new loki(`${homedir}${path.sep}${this.appDir}${path.sep}loki.js`,
-      {
-        autoload:true
 
-      });
-    this.lokiLoadHandler();
-
-    Logger.debug(`stackLine.count(): ${stackLine.count()}`);
-    Logger.debug(`stackLine.get(0): ${stackLine.get(1,true)}`);
+    // Logger.debug(`stackLine.count(): ${stackLine.count()}`);
+    // Logger.debug(`stackLine.get(0): ${stackLine.get(1,true)}`);
 
 
-    stackLine.insert({state:this.stack});
-    stackLine.insert({state:'this.stack'});
-    db.saveDatabase();
+    // stackLine.insert({state:this.stack.toString()});
+    // db.saveDatabase();
+
+    var lokiFile = `${homedir}${path.sep}${this.appDir}${path.sep}loki.js`;
 
     math.config({
       number: 'BigNumber',
@@ -104,11 +93,13 @@ class NoEq {
       historySize: 0
     });
 
-    let stackCtrl = new Stack(rl, math, Logger, stackLine);
+    console.log(lokiFile);
+
+    let stackCtrl = new Stack(rl, math, Logger, lokiFile);
     let stackOps = new StackOps(rl, math, Logger);
 
     stackCtrl.print(this.stack);
-    stackLine.insert({state:this.stack});
+    // // stackLine.insert({state:this.stack.toString()});
 
     process.stdin.on('keypress', (s,key) => {
       // Logger.debug(`key: ${JSON.stringify(key,null,2)}`);
@@ -159,7 +150,7 @@ class NoEq {
             this.tmp = [];
           }
           stackCtrl.print(this.stack);
-          stackLine.insert({state:this.stack});
+          // stackLine.insert({state:this.stack.toString()});
         } else {
           // is something to parse into a Float and one last symbol
           Logger.debug(`this.tmp.length: ${this.tmp.length}`);
@@ -176,7 +167,7 @@ class NoEq {
               }
             }
             stackCtrl.print(this.stack);
-            stackLine.insert({state:this.stack});
+            // stackLine.insert({state:this.stack.toString()});
             for (var i = 0; i < this.tmp.length; i++) {
               Logger.debug(`this.tmp: ${this.tmp}`);
               rl.write(null,{name: 'delete'});
@@ -188,7 +179,7 @@ class NoEq {
                       ) { // first stack stuff
                         this.stack = stackOps[keybinding.keyPress[key.sequence].f](this.stack);
                         stackCtrl.print(this.stack);
-                        stackLine.insert({state:this.stack});
+                        // stackLine.insert({state:this.stack.toString()});
                         this.tmp = [];
           } else if (keybinding.keyPress[key.sequence] != null &&
                      this.switchKeypress &&
@@ -196,7 +187,7 @@ class NoEq {
                    ) { // this is a math operation
                        this.stack = stackCtrl.operation(keybinding.keyPress[key.sequence].numOp,keybinding.keyPress[key.sequence].operation,this.stack);
                        stackCtrl.print(this.stack);
-                       stackLine.insert({state:this.stack});
+                       // stackLine.insert({state:this.stack.toString()});
                        this.tmp = [];
                        rl.write(null,{name: 'delete'});
           } else if (key.shift &&
@@ -207,7 +198,7 @@ class NoEq {
                    ) { // first stack stuff with shift key
                         this.stack = stackOps[keybinding.keyPress[key.sequence].f](this.stack);
                         stackCtrl.print(this.stack);
-                        stackLine.insert({state:this.stack});
+                        // stackLine.insert({state:this.stack.toString()});
                         this.tmp = [];
           } else if (key.shift &&
                      keybinding.keyPress[key.sequence] != null &&
@@ -217,7 +208,7 @@ class NoEq {
                    ) { // this is a math operation with shift key
                        this.stack = stackCtrl.operation(keybinding.keyPress[key.sequence].numOp,keybinding.keyPress[key.sequence].operation,this.stack);
                        stackCtrl.print(this.stack);
-                       stackLine.insert({state:this.stack});
+                       // stackLine.insert({state:this.stack.toString()});
                        this.tmp = [];
                        rl.write(null,{name: 'delete'});
           }
@@ -226,13 +217,13 @@ class NoEq {
     });
 
     rl.on('SIGINT', () => {
-      rl.question('May I store the current stack? (will be available the next time you\'ll open NoEq)', (answer) => {
-        if (answer.match(/^y(es)?$/i)) {
+      rl.question('May I store the current stack? (will be available the next time you\'ll open NoEq) [' + 'y'.grey + '\/n]', (answer) => {
+        if (answer.match(/^y(es)?$/i) || answer.match(/^$/i)) {
+          console.log('YES');
           try {
-            db.saveDatabase();
+            stackCtrl.save();
           } catch (e) {
-            Logger.error(e);
-
+            this.Logger.error(e);
           }
           process.exit();
         }
