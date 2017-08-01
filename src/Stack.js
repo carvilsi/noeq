@@ -10,19 +10,19 @@ const loki    = require('lokijs');
 
 class Stack {
 
-  constructor(readLine, math, Logger, stackLine, lokiFile) {
+  constructor(readLine, math, Logger, stackLine) {
     this.readLine = readLine;
     this.math = math;
     this.Logger = Logger;
     this.stackLine = null;
-    this.lokiFile = lokiFile;
-    this.db = new loki(lokiFile,
-      {
-        autoload:true,
-        autoloadCallback : this.lokiLoadHandler.bind(this),
-        autosave:true,
-        autosaveInterval: 5000
-      });
+    // this.lokiFile = lokiFile;
+    // this.db = new loki(lokiFile,
+    //   {
+    //     autoload:true,
+    //     autoloadCallback : this.lokiLoadHandler.bind(this),
+    //     autosave:true,
+    //     autosaveInterval: 5000
+    //   });
   }
 
   print(stack) {

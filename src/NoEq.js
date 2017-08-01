@@ -11,7 +11,7 @@ const pckg = require('./../package.json');
 const keybinding = require('./keybinding.json');
 const Stack = require('./Stack');
 const StackOps = require('./StackOps');
-// const loki   = require('lokijs');
+const loki   = require('lokijs');
 
 
 
@@ -48,21 +48,13 @@ class NoEq {
     this.tmp = [];
     this.switchKeypress = true;
     this.appDir = '.noeqRPNCjsCALC';
-    // this.lokiFile = `${homedir}${path.sep}${this.appDir}`;
-  }
-
-  static initStack(stack) {
-    this.stack = stack;
-  }
-
-  createDefaultFolder() {
-    try {
-      if (!fs.existsSync(`${homedir}${path.sep}${this.appDir}`)){
-        fs.mkdirSync(`${homedir}${path.sep}${this.appDir}`);
-      }
-    } catch (e) {
-      Logger.debug(`e: ${e}`);
-    }
+    this.db = new loki(`${homedir}${path.sep}${this.appDir}${path.sep}loki.js`,
+      {
+        autoload:true,
+        autoloadCallback : this.lokiLoadHandler.bind(this),
+        autosave:true,
+        autosaveInterval: 5000
+      });
   }
 
   on() {
@@ -70,7 +62,7 @@ class NoEq {
     Logger.useDefaults();
     Logger.setLevel(Logger[this.logLevel]);
 
-    this.createDefaultFolder();
+    // this.createDefaultFolder();
 
     // Logger.debug(`${homedir}${path.sep}${this.appDir}${path.sep}loki.js`);
 
@@ -82,7 +74,7 @@ class NoEq {
     // stackLine.insert({state:this.stack.toString()});
     // db.saveDatabase();
 
-    var lokiFile = `${homedir}${path.sep}${this.appDir}${path.sep}loki.js`;
+    // var lokiFile = `${homedir}${path.sep}${this.appDir}${path.sep}loki.js`;
 
     math.config({
       number: 'BigNumber',
@@ -97,9 +89,9 @@ class NoEq {
       historySize: 0
     });
 
-    console.log(lokiFile);
+    // console.log(lokiFile);
 
-    let stackCtrl = new Stack(rl, math, Logger, lokiFile);
+    let stackCtrl = new Stack(rl, math, Logger, stackLine);
     let stackOps = new StackOps(rl, math, Logger);
 
     // stackCtrl.print(this.stack);
@@ -236,12 +228,23 @@ class NoEq {
     });
   }
 
+  createDefaultFolder() {
+    try {
+      if (!fs.existsSync(`${homedir}${path.sep}${this.appDir}`)){
+        fs.mkdirSync(`${homedir}${path.sep}${this.appDir}`);
+      }
+    } catch (e) {
+      Logger.debug(`e: ${e}`);
+    }
+  }
+
   lokiLoadHandler() {
+    this.createDefaultFolder();
     this.stackLine = this.db.getCollection('stackLine');
     if (!this.stackLine) {
       this.stackLine = this.db.addCollection('stackLine');
     } else {
-      this.Logger.debug(`loki db loaded`);
+      // this.log.debug(`loki db loaded`);
       if (this.stackLine.count() > 0) {
         let tmp = this.stackLine.get(this.stackLine.count(),true)[0].state.split(',');
         this.print(tmp);
