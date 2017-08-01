@@ -51,6 +51,10 @@ class NoEq {
     // this.lokiFile = `${homedir}${path.sep}${this.appDir}`;
   }
 
+  static initStack(stack) {
+    this.stack = stack;
+  }
+
   createDefaultFolder() {
     try {
       if (!fs.existsSync(`${homedir}${path.sep}${this.appDir}`)){
@@ -98,7 +102,7 @@ class NoEq {
     let stackCtrl = new Stack(rl, math, Logger, lokiFile);
     let stackOps = new StackOps(rl, math, Logger);
 
-    stackCtrl.print(this.stack);
+    // stackCtrl.print(this.stack);
     // // stackLine.insert({state:this.stack.toString()});
 
     process.stdin.on('keypress', (s,key) => {
@@ -230,9 +234,28 @@ class NoEq {
 
       });
     });
-
-
   }
+
+  lokiLoadHandler() {
+    this.stackLine = this.db.getCollection('stackLine');
+    if (!this.stackLine) {
+      this.stackLine = this.db.addCollection('stackLine');
+    } else {
+      this.Logger.debug(`loki db loaded`);
+      if (this.stackLine.count() > 0) {
+        let tmp = this.stackLine.get(this.stackLine.count(),true)[0].state.split(',');
+        this.print(tmp);
+      } else {
+        this.print([]);
+      }
+    }
+  }
+
+  save() {
+    this.db.saveDatabase();
+  }
+
+
 }
 
 module.exports = NoEq;

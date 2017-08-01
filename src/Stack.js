@@ -3,22 +3,26 @@
 const colors  = require('colors');
 const _       = require('lodash');
 const loki    = require('lokijs');
+// const NoEq    = require('./NoEq');
 
 
 // This class is to deal with the stack
 
 class Stack {
 
-  constructor(readLine, math, Logger, lokiFile) {
+  constructor(readLine, math, Logger, stackLine, lokiFile) {
     this.readLine = readLine;
     this.math = math;
     this.Logger = Logger;
-    // this.Logger.debug(stackLine);
     this.stackLine = null;
-    this.db = null;
     this.lokiFile = lokiFile;
-    this.initLoki();
-    this.lokiLoadHandler();
+    this.db = new loki(lokiFile,
+      {
+        autoload:true,
+        autoloadCallback : this.lokiLoadHandler.bind(this),
+        autosave:true,
+        autosaveInterval: 5000
+      });
   }
 
   print(stack) {
@@ -31,13 +35,9 @@ class Stack {
     }
     this.readLine.prompt();
     try {
-      this.stackLine.insert({state:stack.toString()});
-      console.log(this.stackLine.get(1,true));
-      for (var i = 0; i <= this.stackLine.count(); i++) {
-        console.log(this.stackLine.get(i,true));
-
+      if (!_.isEmpty(stack)){
+        this.stackLine.insert({state:stack.toString()});
       }
-      // this.Logger.debug(`stackLine.get(0): ${}`);
     } catch (e) {
       this.Logger.debug(e);
     }
@@ -93,27 +93,24 @@ class Stack {
     return stack;
   }
 
-  initLoki() {
-    console.log('=^^=|_');
-    this.Logger.debug(`lokiFile: ${this.lokiFile}`);
-    console.log('=^^=|_');
-    this.db = new loki(this.lokiFile,
-      {
-        autoload:true,
-        autosave:true
-      });
-  }
-
-  lokiLoadHandler() {
-    this.stackLine = this.db.getCollection('stackLine');
-    if (!this.stackLine) {
-      this.stackLine = this.db.addCollection('stackLine');
-    }
-  }
-
-  save() {
-    this.db.saveDatabase();
-  }
+  // lokiLoadHandler() {
+  //   this.stackLine = this.db.getCollection('stackLine');
+  //   if (!this.stackLine) {
+  //     this.stackLine = this.db.addCollection('stackLine');
+  //   } else {
+  //     this.Logger.debug(`loki db loaded`);
+  //     if (this.stackLine.count() > 0) {
+  //       let tmp = this.stackLine.get(this.stackLine.count(),true)[0].state.split(',');
+  //       this.print(tmp);
+  //     } else {
+  //       this.print([]);
+  //     }
+  //   }
+  // }
+  //
+  // save() {
+  //   this.db.saveDatabase();
+  // }
 
 }
 
