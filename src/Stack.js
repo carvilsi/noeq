@@ -20,7 +20,7 @@ class Stack {
     this.stackLine = stackLine
   }
 
-  print(stack) {
+  print(stack, insert) {
     this.Logger.debug(`Stack=  [${stack}]`)
     if (this.Logger.get().context.filterLevel.name === 'OFF') {
       console.log('\x1Bc');
@@ -30,7 +30,7 @@ class Stack {
     }
     this.readLine.prompt();
     try {
-      if (!_.isEmpty(stack)){
+      if (!_.isEmpty(stack) && insert){
         this.stackLine.insert({state:stack.toString()});
       }
     } catch (e) {

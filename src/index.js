@@ -26,6 +26,7 @@ const strangerThings = {
   '\u001b[1;2B': 'down',
   '\u001b[1;2D': 'left',
   '\u001b[1;2C': 'right',
+  '\u001a': 'ctr-z',
   '\r': 'return',
   '.': 'decimalPoint'
 }
@@ -45,6 +46,7 @@ class NoEq {
     this.stack = [];
     this.tmp = [];
     this.switchKeypress = true;
+    this.undo = 0;
     this.appDir = '.noeqRPNCjsCALC';
     this.db = new loki(`${homedir}${path.sep}${this.appDir}${path.sep}loki.js`,
       {
@@ -123,7 +125,7 @@ class NoEq {
           } else {
             this.tmp = [];
           }
-          this.stackCtrl.print(this.stack);
+          this.stackCtrl.print(this.stack,true);
         } else {
           // is something to parse into a Float and one last symbol
           Logger.debug(`this.tmp.length: ${this.tmp.length}`);
@@ -139,7 +141,7 @@ class NoEq {
                 this.stack = this.stackCtrl.operation(keybinding.keyPress[cmd].numOp,keybinding.keyPress[cmd].operation,this.stack);
               }
             }
-            this.stackCtrl.print(this.stack);
+            this.stackCtrl.print(this.stack,true);
             for (var i = 0; i < this.tmp.length; i++) {
               Logger.debug(`this.tmp: ${this.tmp}`);
               rl.write(null,{name: 'delete'});
@@ -150,14 +152,14 @@ class NoEq {
                      keybinding.keyPress[key.sequence].f != null
                       ) { // first stack stuff
                         this.stack = stackOps[keybinding.keyPress[key.sequence].f](this.stack);
-                        this.stackCtrl.print(this.stack);
+                        this.stackCtrl.print(this.stack,true);
                         this.tmp = [];
           } else if (keybinding.keyPress[key.sequence] != null &&
                      this.switchKeypress &&
                      keybinding.keyPress[key.sequence].operation != null
                    ) { // this is a math operation
                        this.stack = this.stackCtrl.operation(keybinding.keyPress[key.sequence].numOp,keybinding.keyPress[key.sequence].operation,this.stack);
-                       this.stackCtrl.print(this.stack);
+                       this.stackCtrl.print(this.stack,true);
                        this.tmp = [];
                        rl.write(null,{name: 'delete'});
           } else if (key.shift &&
@@ -167,7 +169,7 @@ class NoEq {
                      keybinding.keyPress[key.sequence].f != null
                    ) { // first stack stuff with shift key
                         this.stack = stackOps[keybinding.keyPress[key.sequence].f](this.stack);
-                        this.stackCtrl.print(this.stack);
+                        this.stackCtrl.print(this.stack,true);
                         this.tmp = [];
           } else if (key.shift &&
                      keybinding.keyPress[key.sequence] != null &&
@@ -176,7 +178,7 @@ class NoEq {
                      keybinding.keyPress[key.sequence].operation != null
                    ) { // this is a math operation with shift key
                        this.stack = this.stackCtrl.operation(keybinding.keyPress[key.sequence].numOp,keybinding.keyPress[key.sequence].operation,this.stack);
-                       this.stackCtrl.print(this.stack);
+                       this.stackCtrl.print(this.stack,true);
                        this.tmp = [];
                        rl.write(null,{name: 'delete'});
           }
@@ -184,15 +186,28 @@ class NoEq {
       }
     });
 
-    // Asking the user about saving the current stack for further use
+    // Is a ctr-c Asking the user about saving the current stack for further use
     rl.on('SIGINT', () => {
-      rl.question('May I store the current stack? (will be available next time you\'ll open NoEq) ['.grey + 'y'.white + '\/n]'.grey, (answer) => {
-          if (answer.match(/^y(es)?$/i) || answer.match(/^$/i)) {
-            this.save().then(()=> process.exit());
-          } else if (answer.match(/^n(o)?$/i)) {
-            this.truncate().then(()=> process.exit());
-          }
-      });
+      if (this.stack.length > 0) {
+        rl.question('May I store the current stack? (will be available next time you\'ll open NoEq) ['.grey + 'y'.white + '\/n]: '.grey, (answer) => {
+            if (answer.match(/^y(es)?$/i) || answer.match(/^$/i)) {
+              this.save().then(()=> process.exit());
+            } else if (answer.match(/^n(o)?$/i)) {
+              this.truncate().then(()=> process.exit());
+            }
+        });
+      } else {
+        process.exit();
+      }
+    });
+
+
+    // Is a ctr-z Will perform undo on the state of the stack
+    rl.on('SIGTSTP', () => {
+      if (this.stackLine.count() > 0 && this.stackLine.count() > this.undo) {
+        this.stack = this.stackLine.get(this.stackLine.count() - this.undo++,true)[0].state.split(',');
+        this.stackCtrl.print(this.stack,false);
+      }
     });
   }
 
@@ -215,9 +230,8 @@ class NoEq {
     this.stackCtrl.setStackLine(this.stackLine);
     if (this.stackLine.count() > 0) {
       this.stack = this.stackLine.get(this.stackLine.count(),true)[0].state.split(',');
-    } else {
     }
-    this.stackCtrl.print(this.stack)
+    this.stackCtrl.print(this.stack,true)
   }
 
   save() {

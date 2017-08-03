@@ -41,12 +41,15 @@ The name "NoEq" is a small tribute to those great HP's RPN calculators and his [
 
 ## Keymap:
 
+* **ctr-c**: 'exit' Stops NoEq and prompt if the current stack must be persisted on a file for further use on the next session.
+
 ### Stack manipulation
 
 * **up**: 'reverse' Performs a reverse operation over the stack elements
 * **left**: 'drop' Deletes the first element on the stack
 * **right**: 'swap' Swaps the two first elements on the stack
 * **down**: 'first' Swaps position of the first and last elements on the stack
+* **ctr-z**: 'undo' Performs an undo over the stack, return it to the previous state
 
 
 ### Math functions
