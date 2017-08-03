@@ -41,7 +41,7 @@ The name "NoEq" is a small tribute to those great HP's RPN calculators and his [
 
 ## Keymap:
 
-* **ctr-c**: 'exit' Stops NoEq and prompt if the current stack must be persisted on a file for further use on the next session.
+* **ctr-c**: 'exit' Stops NoEq and prompt asking if the current stack must be persisted on a file for further use on the next session.
 
 ### Stack manipulation
 
