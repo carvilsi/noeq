@@ -3,26 +3,21 @@
 const colors  = require('colors');
 const _       = require('lodash');
 const loki    = require('lokijs');
-// const NoEq    = require('./NoEq');
 
 
 // This class is to deal with the stack
 
 class Stack {
 
-  constructor(readLine, math, Logger, stackLine) {
+  constructor(readLine, math, Logger) {
     this.readLine = readLine;
     this.math = math;
     this.Logger = Logger;
     this.stackLine = null;
-    // this.lokiFile = lokiFile;
-    // this.db = new loki(lokiFile,
-    //   {
-    //     autoload:true,
-    //     autoloadCallback : this.lokiLoadHandler.bind(this),
-    //     autosave:true,
-    //     autosaveInterval: 5000
-    //   });
+  }
+
+  setStackLine(stackLine) {
+    this.stackLine = stackLine
   }
 
   print(stack) {
@@ -92,26 +87,6 @@ class Stack {
     }
     return stack;
   }
-
-  // lokiLoadHandler() {
-  //   this.stackLine = this.db.getCollection('stackLine');
-  //   if (!this.stackLine) {
-  //     this.stackLine = this.db.addCollection('stackLine');
-  //   } else {
-  //     this.Logger.debug(`loki db loaded`);
-  //     if (this.stackLine.count() > 0) {
-  //       let tmp = this.stackLine.get(this.stackLine.count(),true)[0].state.split(',');
-  //       this.print(tmp);
-  //     } else {
-  //       this.print([]);
-  //     }
-  //   }
-  // }
-  //
-  // save() {
-  //   this.db.saveDatabase();
-  // }
-
 }
 
 module.exports = Stack;

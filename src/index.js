@@ -13,8 +13,6 @@ const Stack = require('./Stack');
 const StackOps = require('./StackOps');
 const loki   = require('lokijs');
 
-
-
 const rgxpNum = /^[']?[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/;
 const rgxpNumOps = /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?([-+/*^a-zA-Z])$/;
 
@@ -62,20 +60,6 @@ class NoEq {
     Logger.useDefaults();
     Logger.setLevel(Logger[this.logLevel]);
 
-    // this.createDefaultFolder();
-
-    // Logger.debug(`${homedir}${path.sep}${this.appDir}${path.sep}loki.js`);
-
-
-    // Logger.debug(`stackLine.count(): ${stackLine.count()}`);
-    // Logger.debug(`stackLine.get(0): ${stackLine.get(1,true)}`);
-
-
-    // stackLine.insert({state:this.stack.toString()});
-    // db.saveDatabase();
-
-    // var lokiFile = `${homedir}${path.sep}${this.appDir}${path.sep}loki.js`;
-
     math.config({
       number: 'BigNumber',
       precision: this.precision
@@ -89,16 +73,10 @@ class NoEq {
       historySize: 0
     });
 
-    // console.log(lokiFile);
-
-    let stackCtrl = new Stack(rl, math, Logger, stackLine);
+    this.stackCtrl = new Stack(rl, math, Logger, stackLine);
     let stackOps = new StackOps(rl, math, Logger);
 
-    // stackCtrl.print(this.stack);
-    // // stackLine.insert({state:this.stack.toString()});
-
     process.stdin.on('keypress', (s,key) => {
-      // Logger.debug(`key: ${JSON.stringify(key,null,2)}`);
 
       if (key !== null ) {
         if (key.sequence == '\'') {
@@ -119,7 +97,7 @@ class NoEq {
         if (key.sequence === ' ') {
           this.tmp = _.dropRight(this.tmp);
         }
-        var str = stackCtrl.arrayToStr(this.tmp);
+        var str = this.stackCtrl.arrayToStr(this.tmp);
         // We get a new line return and the temp array has sometnig else than return
         if (key.name === 'return') {
           Logger.debug('RETURN');
@@ -136,7 +114,7 @@ class NoEq {
               this.tmp = _.drop(this.tmp);
               this.switchKeypress = true;
             }
-            let num = stackCtrl.arrayToFloat(this.tmp); // parsing the temp array into Float
+            let num = this.stackCtrl.arrayToFloat(this.tmp); // parsing the temp array into Float
             Logger.debug(`The converted characters to num: ${num}`)
             if (!isNaN(num)) {
               this.stack.push(num);
@@ -145,8 +123,7 @@ class NoEq {
           } else {
             this.tmp = [];
           }
-          stackCtrl.print(this.stack);
-          // stackLine.insert({state:this.stack.toString()});
+          this.stackCtrl.print(this.stack);
         } else {
           // is something to parse into a Float and one last symbol
           Logger.debug(`this.tmp.length: ${this.tmp.length}`);
@@ -156,14 +133,13 @@ class NoEq {
           if (str != null && rgxpNumOps.test(str) && cmd != 'e') {
             if (keybinding.keyPress[cmd] != null ) {
               Logger.debug(`this.tmp On command: ${this.tmp}`);
-              let num = stackCtrl.arrayToFloat(_.dropRight(this.tmp)); // parsing the temp array into Float without the command
+              let num = this.stackCtrl.arrayToFloat(_.dropRight(this.tmp)); // parsing the temp array into Float without the command
               if (!isNaN(num)) {
                 this.stack.push(num);
-                this.stack = stackCtrl.operation(keybinding.keyPress[cmd].numOp,keybinding.keyPress[cmd].operation,this.stack);
+                this.stack = this.stackCtrl.operation(keybinding.keyPress[cmd].numOp,keybinding.keyPress[cmd].operation,this.stack);
               }
             }
-            stackCtrl.print(this.stack);
-            // stackLine.insert({state:this.stack.toString()});
+            this.stackCtrl.print(this.stack);
             for (var i = 0; i < this.tmp.length; i++) {
               Logger.debug(`this.tmp: ${this.tmp}`);
               rl.write(null,{name: 'delete'});
@@ -174,16 +150,14 @@ class NoEq {
                      keybinding.keyPress[key.sequence].f != null
                       ) { // first stack stuff
                         this.stack = stackOps[keybinding.keyPress[key.sequence].f](this.stack);
-                        stackCtrl.print(this.stack);
-                        // stackLine.insert({state:this.stack.toString()});
+                        this.stackCtrl.print(this.stack);
                         this.tmp = [];
           } else if (keybinding.keyPress[key.sequence] != null &&
                      this.switchKeypress &&
                      keybinding.keyPress[key.sequence].operation != null
                    ) { // this is a math operation
-                       this.stack = stackCtrl.operation(keybinding.keyPress[key.sequence].numOp,keybinding.keyPress[key.sequence].operation,this.stack);
-                       stackCtrl.print(this.stack);
-                       // stackLine.insert({state:this.stack.toString()});
+                       this.stack = this.stackCtrl.operation(keybinding.keyPress[key.sequence].numOp,keybinding.keyPress[key.sequence].operation,this.stack);
+                       this.stackCtrl.print(this.stack);
                        this.tmp = [];
                        rl.write(null,{name: 'delete'});
           } else if (key.shift &&
@@ -193,8 +167,7 @@ class NoEq {
                      keybinding.keyPress[key.sequence].f != null
                    ) { // first stack stuff with shift key
                         this.stack = stackOps[keybinding.keyPress[key.sequence].f](this.stack);
-                        stackCtrl.print(this.stack);
-                        // stackLine.insert({state:this.stack.toString()});
+                        this.stackCtrl.print(this.stack);
                         this.tmp = [];
           } else if (key.shift &&
                      keybinding.keyPress[key.sequence] != null &&
@@ -202,9 +175,8 @@ class NoEq {
                      keybinding.keyPress[key.sequence].shift &&
                      keybinding.keyPress[key.sequence].operation != null
                    ) { // this is a math operation with shift key
-                       this.stack = stackCtrl.operation(keybinding.keyPress[key.sequence].numOp,keybinding.keyPress[key.sequence].operation,this.stack);
-                       stackCtrl.print(this.stack);
-                       // stackLine.insert({state:this.stack.toString()});
+                       this.stack = this.stackCtrl.operation(keybinding.keyPress[key.sequence].numOp,keybinding.keyPress[key.sequence].operation,this.stack);
+                       this.stackCtrl.print(this.stack);
                        this.tmp = [];
                        rl.write(null,{name: 'delete'});
           }
@@ -212,18 +184,14 @@ class NoEq {
       }
     });
 
+    // Asking the user about saving the current stack for further use
     rl.on('SIGINT', () => {
-      rl.question('May I store the current stack? (will be available the next time you\'ll open NoEq) [' + 'y'.grey + '\/n]', (answer) => {
-        if (answer.match(/^y(es)?$/i) || answer.match(/^$/i)) {
-          console.log('YES');
-          try {
-            stackCtrl.save();
-          } catch (e) {
-            this.Logger.error(e);
+      rl.question('May I store the current stack? (will be available next time you\'ll open NoEq) ['.grey + 'y'.white + '\/n]'.grey, (answer) => {
+          if (answer.match(/^y(es)?$/i) || answer.match(/^$/i)) {
+            this.save().then(()=> process.exit());
+          } else if (answer.match(/^n(o)?$/i)) {
+            this.truncate().then(()=> process.exit());
           }
-          process.exit();
-        }
-
       });
     });
   }
@@ -242,23 +210,31 @@ class NoEq {
     this.createDefaultFolder();
     this.stackLine = this.db.getCollection('stackLine');
     if (!this.stackLine) {
-      this.stackLine = this.db.addCollection('stackLine');
-    } else {
-      // this.log.debug(`loki db loaded`);
-      if (this.stackLine.count() > 0) {
-        let tmp = this.stackLine.get(this.stackLine.count(),true)[0].state.split(',');
-        this.print(tmp);
-      } else {
-        this.print([]);
-      }
+        this.stackLine = this.db.addCollection('stackLine');
     }
+    this.stackCtrl.setStackLine(this.stackLine);
+    if (this.stackLine.count() > 0) {
+      this.stack = this.stackLine.get(this.stackLine.count(),true)[0].state.split(',');
+    } else {
+    }
+    this.stackCtrl.print(this.stack)
   }
 
   save() {
-    this.db.saveDatabase();
+    return new Promise((resolve, reject) => {
+      this.db.saveDatabase((error) => {
+        if (error !== undefined && error !== null) {
+          Logger.error(error);
+        }
+        resolve();
+      });
+    });
   }
 
-
+  truncate() {
+    this.stackLine.clear();
+    return this.save();
+  }
 }
 
 module.exports = NoEq;
