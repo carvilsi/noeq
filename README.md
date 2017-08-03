@@ -25,6 +25,8 @@ The name "NoEq" is a small tribute to those great HP's RPN calculators and his [
 
   Clone this repository and:
 
+  `$ yarn` or `$ npm install`
+
   `$ node bin/noeq.js`
 
   Usage: noeq [options]
