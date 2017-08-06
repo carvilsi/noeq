@@ -21,13 +21,11 @@ The name "NoEq" is a small tribute to those great HP's RPN calculators and his [
 
 **Status**: Only works on my computer.
 
-## Run
+## Install and Run
 
-  Clone this repository and:
+  `$ npm install noeq`
 
-  `$ yarn` or `$ npm install`
-
-  `$ node bin/noeq.js`
+  `$ noeq`
 
   Usage: noeq [options]
 
