@@ -19,11 +19,10 @@ Sadly if you want to put a negative number on the stack or operate you need to s
 
 The name "NoEq" is a small tribute to those great HP's RPN calculators and his [No Equals](https://en.wikipedia.org/wiki/Reverse_Polish_notation#Hewlett-Packard) stuff.
 
-**Status**: Only works on my computer.
 
 ## Install and Run
 
-  `$ npm install noeq`
+  `$ npm install noeq -g`
 
   `$ noeq`
 
