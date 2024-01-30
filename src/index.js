@@ -5,7 +5,7 @@ const homedir = require('os').homedir();
 const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
-const math = require('mathjs');
+const { create, all } = require('mathjs');
 const Logger = require('js-logger');
 const pckg = require('./../package.json');
 const keybinding = require('./keybinding.json');
@@ -62,10 +62,12 @@ class NoEq {
     Logger.useDefaults();
     Logger.setLevel(Logger[this.logLevel]);
 
-    math.config({
+    const config = {
       number: 'BigNumber',
       precision: this.precision
-    });
+    }
+
+    const math = create(all, config);
 
     var rl = readline.createInterface({
       input: process.stdin,
