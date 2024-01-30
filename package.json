@@ -1,6 +1,6 @@
 {
   "name": "noeq",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "!= a <3 RPN calculator using math.js (http://mathjs.org/)",
   "main": "NoEq.js",
   "scripts": {
