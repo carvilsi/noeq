@@ -14,7 +14,7 @@ const StackOps = require('./StackOps');
 const loki   = require('lokijs');
 
 const rgxpNum = /^[']?[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/;
-const rgxpNumOps = /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?([-+/*^a-zA-Z])$/;
+const rgxpNumOps = /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?([-+[>^a-zA-Z])$/;
 
 // characters to avoid
 const strangerThings = {
@@ -28,13 +28,10 @@ const strangerThings = {
   '\u001b[1;2C': 'right',
   '\u001a': 'ctr-z',
   '\r': 'return',
-  '.': 'decimalPoint'
 }
-
 
 var db = null;
 var stackLine = null;
-
 
 class NoEq {
 
@@ -51,7 +48,7 @@ class NoEq {
     this.db = new loki(`${homedir}${path.sep}${this.appDir}${path.sep}loki.js`,
       {
         autoload:true,
-        autoloadCallback : this.lokiLoadHandler.bind(this),
+        autoloadCallback: this.lokiLoadHandler.bind(this),
         autosave:true,
         autosaveInterval: 5000
       });
