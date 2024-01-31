@@ -80,9 +80,8 @@ class NoEq {
     process.stdin.on('keypress', (s,key) => {
 
       if (key !== null ) {
-        if (key.sequence == '\'') {
-              this.switchKeypress = false;
-        }
+        if (key.sequence == 'h') this.stackCtrl.print('LOL');
+        if (key.sequence == '\'') this.switchKeypress = false;
         // do not add to temp array no valid scape characters
         if (!strangerThings[key.sequence]) {
           this.tmp.push(key.sequence);
@@ -109,13 +108,15 @@ class NoEq {
           if (this.tmp.length === 0 && this.stack.length > 0) {
             Logger.debug('void line');
             this.tmp = stackOps.last(this.stack);
-          } else if (str != null && rgxpNum.test(str)) { // It is just a number to push at the stack
+          // It is just a number to push at the stack
+          } else if (str != null && rgxpNum.test(str)) {
             Logger.debug(`The captured characters: ${str}`);
             if (str.indexOf('\'') === 0){
               this.tmp = _.drop(this.tmp);
               this.switchKeypress = true;
             }
-            let num = this.stackCtrl.arrayToFloat(this.tmp); // parsing the temp array into Float
+            // parsing the temp array into Float
+            let num = this.stackCtrl.arrayToFloat(this.tmp); 
             Logger.debug(`The converted characters to num: ${num}`)
             if (!isNaN(num)) {
               this.stack.push(num);
@@ -134,10 +135,13 @@ class NoEq {
           if (str != null && rgxpNumOps.test(str) && cmd != 'e') {
             if (keybinding.keyPress[cmd] != null ) {
               Logger.debug(`this.tmp On command: ${this.tmp}`);
-              let num = this.stackCtrl.arrayToFloat(_.dropRight(this.tmp)); // parsing the temp array into Float without the command
+              // parsing the temp array into Float without the command
+              let num = this.stackCtrl.arrayToFloat(_.dropRight(this.tmp));
               if (!isNaN(num)) {
                 this.stack.push(num);
-                this.stack = this.stackCtrl.operation(keybinding.keyPress[cmd].numOp,keybinding.keyPress[cmd].operation,this.stack);
+                this.stack = this.stackCtrl.operation(
+                  keybinding.keyPress[cmd].numOp,
+                  keybinding.keyPress[cmd].operation,this.stack);
               }
             }
             this.stackCtrl.print(this.stack,true);
@@ -157,7 +161,9 @@ class NoEq {
                      this.switchKeypress &&
                      keybinding.keyPress[key.sequence].operation != null
                    ) { // this is a math operation
-                       this.stack = this.stackCtrl.operation(keybinding.keyPress[key.sequence].numOp,keybinding.keyPress[key.sequence].operation,this.stack);
+                       this.stack = this.stackCtrl.operation(
+                         keybinding.keyPress[key.sequence].numOp,
+                         keybinding.keyPress[key.sequence].operation,this.stack);
                        this.stackCtrl.print(this.stack,true);
                        this.tmp = [];
                        rl.write(null,{name: 'delete'});
@@ -176,7 +182,9 @@ class NoEq {
                      keybinding.keyPress[key.sequence].shift &&
                      keybinding.keyPress[key.sequence].operation != null
                    ) { // this is a math operation with shift key
-                       this.stack = this.stackCtrl.operation(keybinding.keyPress[key.sequence].numOp,keybinding.keyPress[key.sequence].operation,this.stack);
+                       this.stack = this.stackCtrl.operation(
+                         keybinding.keyPress[key.sequence].numOp,
+                         keybinding.keyPress[key.sequence].operation,this.stack);
                        this.stackCtrl.print(this.stack,true);
                        this.tmp = [];
                        rl.write(null,{name: 'delete'});
@@ -188,7 +196,8 @@ class NoEq {
     // Is a ctr-c Asking the user about saving the current stack for further use
     rl.on('SIGINT', () => {
       if (this.stack.length > 0) {
-        rl.question('May I store the current stack? (will be available next time you\'ll open NoEq) ['.grey + 'y'.white + '\/n]: '.grey, (answer) => {
+        rl.question('May I store the current stack? (will be available next time you\'ll open NoEq) ['.grey + 'y'.white + '\/n]: '
+          .grey, (answer) => {
             if (answer.match(/^y(es)?$/i) || answer.match(/^$/i)) {
               this.save().then(()=> process.exit());
             } else if (answer.match(/^n(o)?$/i)) {
@@ -204,7 +213,8 @@ class NoEq {
     // Is a ctr-z Will perform undo on the state of the stack
     rl.on('SIGTSTP', () => {
       if (this.stackLine.count() > 0 && this.stackLine.count() > this.undo) {
-        this.stack = this.stackLine.get(this.stackLine.count() - this.undo++,true)[0].state.split(',');
+        this.stack = this.stackLine.get(this.stackLine.count() - this.undo++,
+          true)[0].state.split(',');
         this.stackCtrl.print(this.stack,false);
       }
     });
@@ -228,7 +238,8 @@ class NoEq {
     }
     this.stackCtrl.setStackLine(this.stackLine);
     if (this.stackLine.count() > 0) {
-      this.stack = this.stackLine.get(this.stackLine.count(),true)[0].state.split(',');
+      this.stack = this.stackLine.get(this.stackLine.count(),
+        true)[0].state.split(',');
     }
     this.stackCtrl.print(this.stack,true)
   }
@@ -251,3 +262,4 @@ class NoEq {
 }
 
 module.exports = NoEq;
+

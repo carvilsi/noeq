@@ -1,15 +1,4 @@
-#! /usr/bin/env node
-
-'use strict';
-
-const options = require('commander');
-const NoEq = require('./../src/index');
-const pckg = require('./../package.json');
-
-options
-.version(`${pckg.name} v${pckg.version}\n${pckg.description}`)
-.usage('[options]')
-.description(`${pckg.description}\n
+const helpMessage = `
                __                              
               |  |         _____     _____     
               |  |_____   |   | |___|   __|___ 
@@ -34,13 +23,5 @@ options
 
       +: add    -: subtract    /: divide    *: multiply
       p: pow    c: cos         C: sec       s: sin
-      S: csc    t: tan         T: cot       r: sqrt`)
-.option('-p, --prompt [type]','Your prompt for NoEq','!= ')
-.option('-s, --precision [type]',`precision for mathjs library value [0..16], 
-        default: 10 (http://mathjs.org/docs/reference/functions/format.html)`,'10')
-.option('-l, --logLevel [type]','level for logging (dev porpouses), default: OFF','OFF')
-.parse(process.argv);
-
-var noeq = new NoEq(options);
-noeq.on();
+      S: csc    t: tan         T: cot       r: sqrt`;
 
