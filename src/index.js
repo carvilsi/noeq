@@ -80,7 +80,6 @@ class NoEq {
     process.stdin.on('keypress', (s,key) => {
 
       if (key !== null ) {
-        if (key.sequence == 'h') this.stackCtrl.print('LOL');
         if (key.sequence == '\'') this.switchKeypress = false;
         // do not add to temp array no valid scape characters
         if (!strangerThings[key.sequence]) {
