@@ -1,12 +1,10 @@
 "use strict";
 
-const colors  = require('colors');
-const _       = require('lodash');
-const loki    = require('lokijs');
-
+const colors = require('colors');
+const _ = require('lodash');
+const loki  = require('lokijs');
 
 // This class is to deal with the stack
-
 class Stack {
 
   constructor(readLine, math, Logger) {
@@ -90,3 +88,4 @@ class Stack {
 }
 
 module.exports = Stack;
+
