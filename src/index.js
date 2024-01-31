@@ -11,7 +11,7 @@ const pckg = require('./../package.json');
 const keybinding = require('./keybinding.json');
 const Stack = require('./Stack');
 const StackOps = require('./StackOps');
-const loki   = require('lokijs');
+const loki = require('lokijs');
 
 const rgxpNum = /^[']?[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/;
 const rgxpNumOps = /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?([-+[>^a-zA-Z])$/;
