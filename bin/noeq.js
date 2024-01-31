@@ -20,7 +20,6 @@ options
  Keymap
 
       ctr-c: 'exit' Stops NoEq and prompt asking if the current stack must be persisted on a file for further use on the next session.
-      h: prints help into the stack
 
   Stack manipulation
 
