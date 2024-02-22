@@ -2,7 +2,7 @@
 
 != a <3 [RPN](https://en.wikipedia.org/wiki/Reverse_Polish_notation) calculator using [math.js](http://mathjs.org/)
 
-![Alt vmware](https://github.com/carvilsi/noeq/raw/master/img/noeq.png)
+![Alt vmware](https://github.com/carvilsi/noeq/blob/main/img/noeq.png)
 
 
 On top of math.js a powerful and extensible and easily customize RPN calculator UX oriented.
